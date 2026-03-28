@@ -1,0 +1,24 @@
+{
+  "name": "jarvis-ai",
+  "version": "1.0.0",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "keywords": ["ai", "voice", "receptionist", "jarvis"],
+  "author": "JARVIS AI",
+  "license": "ISC",
+  "description": "JARVIS AI Voice Receptionist - Demo Funnel & Landing Page",
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "dependencies": {
+    "cors": "^2.8.6",
+    "dotenv": "^17.3.1",
+    "express": "^5.2.1",
+    "helmet": "^8.1.0",
+    "node-fetch": "^2.7.0",
+    "stripe": "^21.0.1"
+  }
+}

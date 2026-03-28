@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>JARVIS AI — Your AI Receptionist. Always On. Never Misses a Lead.</title>
+  <meta name="description" content="JARVIS AI is your 24/7 AI voice receptionist. Never miss a call, qualify leads automatically, and book appointments around the clock." />
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🤖</text></svg>" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/styles.css" />
+</head>
+<body>
+  <!-- ===== NAVBAR ===== -->
+  <nav class="navbar" id="navbar">
+    <div class="container navbar-inner">
+      <a href="#" class="logo">
+        <span class="logo-icon">
+          <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+            <circle cx="14" cy="14" r="13" stroke="var(--cyan)" stroke-width="2"/>
+            <circle cx="14" cy="14" r="5" fill="var(--cyan)" opacity="0.8"/>
+            <path d="M14 1 L14 6 M14 22 L14 27 M1 14 L6 14 M22 14 L27 14" stroke="var(--cyan)" stroke-width="1.5" opacity="0.5"/>
+          </svg>
+        </span>
+        <span class="logo-text">JARVIS <span class="logo-ai">AI</span></span>
+      </a>
+      <div class="nav-links">
+        <a href="#features">Features</a>
+        <a href="#industries">Industries</a>
+        <a href="#pricing">Pricing</a>
+        <a href="#demo" class="btn btn-sm btn-primary">Get Demo</a>
+      </div>
+      <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- ===== HERO ===== -->
+  <section class="hero" id="demo">
+    <div class="hero-bg">
+      <div class="grid-overlay"></div>
+      <div class="glow glow-1"></div>
+      <div class="glow glow-2"></div>
+      <div class="particles" id="particles"></div>
+    </div>
+    <div class="container hero-content">
+      <div class="hero-badge">
+        <span class="badge-dot"></span>
+        AI-Powered Voice Technology
+      </div>
+      <h1 class="hero-title">
+        Your AI Receptionist.<br/>
+        <span class="gradient-text">Always On. Never Misses a Lead.</span>
+      </h1>
+      <p class="hero-subtitle">
+        Hear JARVIS in action — enter your number and get a live 3-minute demo call right now
+      </p>
+
+      <form class="demo-form" id="demoForm">
+        <div class="form-row">
+          <div class="input-group">
+            <div class="input-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+            </div>
+            <input type="tel" id="phoneInput" name="phone" placeholder="Enter your phone number" required autocomplete="tel" />
+          </div>
+          <button type="submit" class="btn btn-primary btn-lg" id="demoBtn">
+            <span class="btn-text">Call Me Now</span>
+            <span class="btn-loader" style="display:none;">
+              <svg width="20" height="20" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="3" fill="none" stroke-dasharray="31.4" stroke-dashoffset="10"><animateTransform attributeName="transform" type="rotate" from="0 12 12" to="360 12 12" dur="0.8s" repeatCount="indefinite"/></circle></svg>
+            </span>
+          </button>
+        </div>
+        <div class="form-message" id="formMessage"></div>
+      </form>
+
+      <div class="hero-trust">
+        <div class="trust-item">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--cyan)" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+          No credit card required
+        </div>
+        <div class="trust-item">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--cyan)" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+          3-minute live demo
+        </div>
+        <div class="trust-item">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--cyan)" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+          Works with any business
+        </div>
+      </div>
+    </div>
+    <div class="hero-scroll-indicator">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--cyan)" stroke-width="2" opacity="0.5"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
+    </div>
+  </section>
+
+  <!-- ===== FEATURES ===== -->
+  <section class="section features" id="features">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-label">Why JARVIS AI</span>
+        <h2 class="section-title">Three reasons businesses <span class="gradient-text">switch to JARVIS</span></h2>
+      </div>
+      <div class="features-grid">
+        <!-- Feature 1 -->
+        <div class="feature-card">
+          <div class="feature-icon">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--cyan)" stroke-width="1.5">
+              <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/>
+              <path d="M14.05 2a9 9 0 0 1 8 7.94" opacity="0.5"/>
+              <path d="M14.05 6A5 5 0 0 1 18 10" opacity="0.5"/>
+            </svg>
+          </div>
+          <h3 class="feature-title">Never Miss a Call</h3>
+          <p class="feature-desc">JARVIS answers every call instantly, 24/7/365. No voicemail, no hold music, no missed opportunities. Every caller gets a professional, immediate response.</p>
+          <div class="feature-stat">
+            <span class="stat-number">100%</span>
+            <span class="stat-label">Call Answer Rate</span>
+          </div>
+        </div>
+        <!-- Feature 2 -->
+        <div class="feature-card">
+          <div class="feature-icon">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--cyan)" stroke-width="1.5">
+              <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+              <circle cx="8.5" cy="7" r="4"/>
+              <path d="M20 8v6M23 11h-6" opacity="0.7"/>
+            </svg>
+          </div>
+          <h3 class="feature-title">Qualifies Leads Automatically</h3>
+          <p class="feature-desc">JARVIS asks the right questions, captures caller details, and scores leads in real-time. Your team only talks to qualified prospects — saving hours every day.</p>
+          <div class="feature-stat">
+            <span class="stat-number">3x</span>
+            <span class="stat-label">More Qualified Leads</span>
+          </div>
+        </div>
+        <!-- Feature 3 -->
+        <div class="feature-card">
+          <div class="feature-icon">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--cyan)" stroke-width="1.5">
+              <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+              <line x1="16" y1="2" x2="16" y2="6"/>
+              <line x1="8" y1="2" x2="8" y2="6"/>
+              <line x1="3" y1="10" x2="21" y2="10"/>
+              <path d="M8 14h.01M12 14h.01M16 14h.01M8 18h.01M12 18h.01" opacity="0.7"/>
+            </svg>
+          </div>
+          <h3 class="feature-title">Books Appointments 24/7</h3>
+          <p class="feature-desc">Integrated with your calendar, JARVIS books appointments on the spot. No back-and-forth, no scheduling delays. Clients get instant confirmation.</p>
+          <div class="feature-stat">
+            <span class="stat-number">24/7</span>
+            <span class="stat-label">Booking Availability</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== HOW IT WORKS ===== -->
+  <section class="section how-it-works">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-label">How It Works</span>
+        <h2 class="section-title">Up and running in <span class="gradient-text">under 48 hours</span></h2>
+      </div>
+      <div class="steps-grid">
+        <div class="step-card">
+          <div class="step-number">01</div>
+          <h3>Discovery Call</h3>
+          <p>We learn about your business, call flow, and what a perfect receptionist looks like for you.</p>
+        </div>
+        <div class="step-connector">
+          <svg width="40" height="2" viewBox="0 0 40 2"><line x1="0" y1="1" x2="40" y2="1" stroke="var(--cyan)" stroke-width="2" stroke-dasharray="4 4" opacity="0.4"/></svg>
+        </div>
+        <div class="step-card">
+          <div class="step-number">02</div>
+          <h3>Custom Build</h3>
+          <p>We configure JARVIS with your scripts, FAQs, booking rules, and brand voice.</p>
+        </div>
+        <div class="step-connector">
+          <svg width="40" height="2" viewBox="0 0 40 2"><line x1="0" y1="1" x2="40" y2="1" stroke="var(--cyan)" stroke-width="2" stroke-dasharray="4 4" opacity="0.4"/></svg>
+        </div>
+        <div class="step-card">
+          <div class="step-number">03</div>
+          <h3>Go Live</h3>
+          <p>Forward your calls to JARVIS and start converting more leads — from day one.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== INDUSTRIES ===== -->
+  <section class="section industries" id="industries">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-label">Built For Your Industry</span>
+        <h2 class="section-title">Trusted by businesses <span class="gradient-text">across industries</span></h2>
+        <p class="section-desc">JARVIS is trained and optimized for service-based businesses that rely on phone leads.</p>
+      </div>
+      <div class="industries-grid">
+        <div class="industry-card">
+          <div class="industry-icon">🦷</div>
+          <h3>Dental Clinics</h3>
+          <p>Book hygiene appointments, handle new patient inquiries, and manage cancellations automatically.</p>
+        </div>
+        <div class="industry-card">
+          <div class="industry-icon">⚖️</div>
+          <h3>Law Firms</h3>
+          <p>Screen potential clients, capture case details, and schedule consultations without paralegal time.</p>
+        </div>
+        <div class="industry-card">
+          <div class="industry-icon">🏠</div>
+          <h3>Real Estate</h3>
+          <p>Qualify buyer and seller leads, answer property questions, and book showings on autopilot.</p>
+        </div>
+        <div class="industry-card">
+          <div class="industry-icon">🔧</div>
+          <h3>HVAC</h3>
+          <p>Dispatch service calls, handle emergency requests, and book maintenance appointments 24/7.</p>
+        </div>
+        <div class="industry-card">
+          <div class="industry-icon">🏥</div>
+          <h3>Medical Offices</h3>
+          <p>Manage patient scheduling, handle prescription refill requests, and route urgent calls.</p>
+        </div>
+        <div class="industry-card">
+          <div class="industry-icon">✨</div>
+          <h3>Your Business</h3>
+          <p>Any service business that depends on phone calls can benefit from JARVIS AI.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== PRICING ===== -->
+  <section class="section pricing" id="pricing">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-label">Simple Pricing</span>
+        <h2 class="section-title">Get started with <span class="gradient-text">JARVIS AI</span></h2>
+      </div>
+      <div class="pricing-card-wrapper">
+        <div class="pricing-card">
+          <div class="pricing-badge">Most Popular</div>
+          <h3 class="pricing-name">JARVIS AI Setup</h3>
+          <p class="pricing-desc">Custom AI voice receptionist, fully configured, tested, and deployed for your business.</p>
+          <div class="pricing-amount">
+            <span class="pricing-currency">$</span>
+            <span class="pricing-number">297</span>
+            <span class="pricing-period">CAD / setup deposit</span>
+          </div>
+          <ul class="pricing-features">
+            <li>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--cyan)" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+              Custom AI voice configuration
+            </li>
+            <li>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--cyan)" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+              Business-specific call scripts
+            </li>
+            <li>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--cyan)" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+              Calendar & CRM integration
+            </li>
+            <li>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--cyan)" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+              Lead qualification logic
+            </li>
+            <li>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--cyan)" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+              48-hour deployment
+            </li>
+            <li>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--cyan)" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+              30-day support included
+            </li>
+          </ul>
+          <button class="btn btn-primary btn-lg btn-full" id="checkoutBtn" onclick="openCheckout()">
+            Get Started Now
+          </button>
+          <p class="pricing-note">Secure payment via Stripe. Setup begins within 24 hours of deposit.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== FINAL CTA ===== -->
+  <section class="section cta-section">
+    <div class="container">
+      <div class="cta-card">
+        <div class="cta-glow"></div>
+        <h2>Ready to stop missing calls?</h2>
+        <p>Try JARVIS right now. Enter your number and experience the future of business communication.</p>
+        <a href="#demo" class="btn btn-primary btn-lg">Get Your Free Demo Call</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== FOOTER ===== -->
+  <footer class="footer">
+    <div class="container footer-inner">
+      <div class="footer-brand">
+        <span class="logo-text">JARVIS <span class="logo-ai">AI</span></span>
+        <p>AI-powered voice receptionist for modern businesses.</p>
+      </div>
+      <div class="footer-links">
+        <a href="#features">Features</a>
+        <a href="#industries">Industries</a>
+        <a href="#pricing">Pricing</a>
+        <a href="#demo">Get Demo</a>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2026 JARVIS AI. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ===== CHECKOUT MODAL ===== -->
+  <div class="modal-overlay" id="checkoutModal">
+    <div class="modal">
+      <button class="modal-close" onclick="closeCheckoutModal()">&times;</button>
+      <h2>Complete Your Setup</h2>
+      <p>Enter your details below to proceed to secure checkout.</p>
+      <form id="checkoutForm">
+        <div class="form-group">
+          <label for="checkoutName">Full Name</label>
+          <input type="text" id="checkoutName" name="name" required placeholder="John Smith" />
+        </div>
+        <div class="form-group">
+          <label for="checkoutEmail">Email Address</label>
+          <input type="email" id="checkoutEmail" name="email" required placeholder="john@business.com" />
+        </div>
+        <div class="form-group">
+          <label for="checkoutPhone">Phone Number</label>
+          <input type="tel" id="checkoutPhone" name="phone" required placeholder="+1 (555) 123-4567" />
+        </div>
+        <div class="form-group">
+          <label for="checkoutBusiness">Business Name</label>
+          <input type="text" id="checkoutBusiness" name="business" required placeholder="Acme Dental Clinic" />
+        </div>
+        <button type="submit" class="btn btn-primary btn-lg btn-full" id="checkoutSubmitBtn">
+          <span class="btn-text">Proceed to Payment — $297 CAD</span>
+          <span class="btn-loader" style="display:none;">
+            <svg width="20" height="20" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="3" fill="none" stroke-dasharray="31.4" stroke-dashoffset="10"><animateTransform attributeName="transform" type="rotate" from="0 12 12" to="360 12 12" dur="0.8s" repeatCount="indefinite"/></circle></svg>
+          </span>
+        </button>
+      </form>
+      <p class="modal-secure">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        Secured by Stripe. 256-bit SSL encryption.
+      </p>
+    </div>
+  </div>
+
+  <script src="/app.js"></script>
+</body>
+</html>
