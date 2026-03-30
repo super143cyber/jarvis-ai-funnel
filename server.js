@@ -393,16 +393,16 @@ app.post('/api/create-checkout', async (req, res) => {
     const session = await s.checkout.sessions.create({
       payment_method_types : ['card'],
       mode                 : 'payment',
-      currency             : 'cad',
+      currency             : 'usd',
       line_items: [
         {
           price_data: {
-            currency     : 'cad',
+            currency     : 'usd',
             product_data : {
-              name        : 'JARVIS AI Setup Deposit',
+              name        : 'JARVIS AI Receptionist — Setup Deposit',
               description : 'Custom AI voice receptionist setup for your business. Fully configured, tested, and deployed.',
             },
-            unit_amount : 29700, // $297.00 CAD in cents
+            unit_amount : 49700, // $497.00 USD in cents
           },
           quantity : 1,
         },
