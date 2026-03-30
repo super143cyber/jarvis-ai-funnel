@@ -2,3 +2,6 @@ node_modules/
 .env
 .DS_Store
 *.log
+
+# Abuse prevention runtime data (created at server startup)
+data/*.json
