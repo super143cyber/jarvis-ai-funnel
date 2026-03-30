@@ -1,359 +1,615 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>JARVIS AI — Your AI Receptionist. Always On. Never Misses a Lead.</title>
-  <meta name="description" content="JARVIS AI is your 24/7 AI voice receptionist. Never miss a call, qualify leads automatically, and book appointments around the clock." />
-  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🤖</text></svg>" />
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="/styles.css" />
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JARVIS AI — Your Business Never Misses a Call Again</title>
+<meta name="description" content="AI-powered voice receptionist that answers every call, qualifies leads, and books appointments 24/7. Try a free 3-minute demo call.">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🤖</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<style>
+:root {
+  --bg: #0a0a0f;
+  --bg2: #0f0f18;
+  --bg-glass: rgba(255,255,255,0.025);
+  --border: rgba(255,255,255,0.06);
+  --border-glow: rgba(6,214,240,0.15);
+  --blue: #3b82f6;
+  --cyan: #06d6f0;
+  --gold: #f0b429;
+  --text: #f0f0f5;
+  --text2: rgba(240,240,245,0.6);
+  --text3: rgba(240,240,245,0.35);
+  --grad: linear-gradient(135deg,#3b82f6,#06d6f0);
+  --grad-hero: linear-gradient(135deg,#3b82f6 0%,#06d6f0 50%,#f0b429 100%);
+  --font-d: 'Syne',sans-serif;
+  --font-b: 'Outfit',sans-serif;
+  --ease: cubic-bezier(0.16,1,0.3,1);
+  --r-sm: 8px; --r-md: 16px; --r-lg: 24px; --r-xl: 32px;
+}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth;-webkit-font-smoothing:antialiased}
+body{font-family:var(--font-b);background:var(--bg);color:var(--text);overflow-x:hidden;line-height:1.6}
+a{text-decoration:none;color:inherit}
+button{cursor:pointer;border:none;background:none;font-family:var(--font-b)}
+input{font-family:var(--font-b)}
+.container{max-width:1200px;margin:0 auto;padding:0 24px}
+.gt{background:var(--grad-hero);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.reveal{opacity:0;transform:translateY(40px)}
+#hc{position:absolute;top:0;left:0;width:100%;height:100%;z-index:0;pointer-events:none}
+.aurora{position:absolute;top:-50%;left:-50%;width:200%;height:200%;z-index:0;pointer-events:none;background:radial-gradient(ellipse 600px 400px at 20% 30%,rgba(59,130,246,0.12) 0%,transparent 70%),radial-gradient(ellipse 500px 350px at 70% 60%,rgba(6,214,240,0.08) 0%,transparent 70%),radial-gradient(ellipse 400px 300px at 50% 20%,rgba(240,180,41,0.05) 0%,transparent 70%);animation:au 20s ease-in-out infinite alternate}
+@keyframes au{0%{transform:translate(0,0) rotate(0)}33%{transform:translate(30px,-20px) rotate(1deg)}66%{transform:translate(-20px,30px) rotate(-1deg)}100%{transform:translate(10px,-10px) rotate(.5deg)}}
+
+/* NAV */
+.nav{position:fixed;top:0;left:0;right:0;z-index:1000;padding:0 24px;transition:all .4s var(--ease)}
+.nav.scrolled{background:rgba(10,10,15,0.85);backdrop-filter:blur(20px) saturate(1.5);-webkit-backdrop-filter:blur(20px) saturate(1.5);border-bottom:1px solid var(--border)}
+.nav-in{max-width:1200px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;height:72px}
+.nav-logo{font-family:var(--font-d);font-weight:800;font-size:1.5rem;letter-spacing:-0.02em}
+.nav-links{display:flex;align-items:center;gap:36px}
+.nav-links a{font-size:.9rem;font-weight:500;color:var(--text2);transition:color .3s;letter-spacing:.01em}
+.nav-links a:hover{color:var(--text)}
+.nav-cta{display:inline-flex;align-items:center;gap:8px;padding:10px 24px;background:var(--grad);border-radius:100px;font-weight:600;font-size:.875rem;color:#fff!important;transition:all .3s var(--ease);box-shadow:0 0 20px rgba(6,214,240,0.2)}
+.nav-cta:hover{transform:translateY(-1px);box-shadow:0 0 30px rgba(6,214,240,0.35)}
+.nav-mob{display:none;flex-direction:column;gap:5px;padding:4px}
+.nav-mob span{display:block;width:24px;height:2px;background:var(--text);border-radius:2px;transition:all .3s}
+
+/* HERO */
+.hero{position:relative;min-height:100vh;display:flex;align-items:center;overflow:hidden;padding:120px 0 80px}
+.hero-grid{display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center;position:relative;z-index:2}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;padding:6px 16px 6px 8px;background:var(--bg-glass);border:1px solid var(--border);border-radius:100px;font-size:.8rem;font-weight:500;color:var(--cyan);margin-bottom:24px;backdrop-filter:blur(10px)}
+.ldot{width:8px;height:8px;background:#22c55e;border-radius:50%;animation:lp 2s ease-in-out infinite;box-shadow:0 0 8px rgba(34,197,94,0.6)}
+@keyframes lp{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(1.3)}}
+.hero h1{font-family:var(--font-d);font-size:clamp(2.5rem,5vw,4rem);font-weight:800;line-height:1.08;letter-spacing:-0.03em;margin-bottom:20px}
+.hero-sub{font-size:1.125rem;color:var(--text2);line-height:1.7;margin-bottom:36px;max-width:480px}
+.hero-form{display:flex;gap:0;max-width:460px;background:var(--bg-glass);border:1px solid var(--border);border-radius:100px;padding:5px;transition:border-color .3s}
+.hero-form:focus-within{border-color:var(--cyan);box-shadow:0 0 30px rgba(6,214,240,0.1)}
+.hero-form input{flex:1;background:transparent;border:none;outline:none;padding:14px 20px;font-size:.95rem;color:var(--text);min-width:0}
+.hero-form input::placeholder{color:var(--text3)}
+.hero-form button{padding:14px 28px;background:var(--grad);border-radius:100px;font-weight:600;font-size:.9rem;color:#fff;white-space:nowrap;transition:all .3s var(--ease);box-shadow:0 0 20px rgba(6,214,240,0.2)}
+.hero-form button:hover{transform:scale(1.02);box-shadow:0 0 30px rgba(6,214,240,0.35)}
+.hero-form button:disabled{opacity:.7;transform:none}
+.hero-trust{display:flex;align-items:center;gap:20px;margin-top:20px;font-size:.8rem;color:var(--text3)}
+.hero-trust span{display:flex;align-items:center;gap:6px}
+.hero-trust svg{width:14px;height:14px;opacity:.5}
+
+/* PHONE MOCKUP */
+.phone-wrap{display:flex;justify-content:center;align-items:center;position:relative}
+.phone-glow{position:absolute;width:300px;height:300px;background:radial-gradient(circle,rgba(6,214,240,0.15) 0%,transparent 70%);border-radius:50%;animation:gp 4s ease-in-out infinite}
+@keyframes gp{0%,100%{transform:scale(1);opacity:.6}50%{transform:scale(1.15);opacity:1}}
+.phone-float{animation:pf 6s ease-in-out infinite}
+@keyframes pf{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
+.phone{width:280px;background:linear-gradient(145deg,#1a1a2e,#12121f);border-radius:40px;padding:12px;border:1px solid rgba(255,255,255,0.08);box-shadow:0 40px 80px rgba(0,0,0,0.5),0 0 60px rgba(6,214,240,0.08),inset 0 1px 0 rgba(255,255,255,0.05);position:relative;z-index:2}
+.phone-scr{background:#0d0d1a;border-radius:30px;overflow:hidden;padding:24px 16px;min-height:420px;display:flex;flex-direction:column}
+.phone-status{display:flex;justify-content:space-between;align-items:center;font-size:.7rem;color:var(--text3);margin-bottom:32px}
+.phone-ui{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
+.phone-av{width:80px;height:80px;border-radius:50%;background:var(--grad);display:flex;align-items:center;justify-content:center;font-family:var(--font-d);font-size:1.8rem;font-weight:800;color:#fff;margin-bottom:16px;box-shadow:0 0 30px rgba(6,214,240,0.3);animation:ag 3s ease-in-out infinite}
+@keyframes ag{0%,100%{box-shadow:0 0 30px rgba(6,214,240,0.3)}50%{box-shadow:0 0 50px rgba(6,214,240,0.5)}}
+.phone-name{font-family:var(--font-d);font-weight:700;font-size:1.2rem;margin-bottom:4px}
+.phone-label{font-size:.75rem;color:var(--cyan);margin-bottom:24px}
+.phone-live{display:inline-flex;align-items:center;gap:6px;padding:4px 12px;background:rgba(34,197,94,0.15);border:1px solid rgba(34,197,94,0.3);border-radius:100px;font-size:.65rem;font-weight:700;color:#22c55e;text-transform:uppercase;letter-spacing:.1em;margin-bottom:20px}
+.phone-live .ldot{width:6px;height:6px}
+.waveform{display:flex;align-items:center;justify-content:center;gap:3px;height:40px;margin-bottom:24px}
+.waveform span{width:3px;border-radius:3px;background:var(--cyan);animation:wf 1.2s ease-in-out infinite}
+.waveform span:nth-child(1){height:12px;animation-delay:0s}
+.waveform span:nth-child(2){height:24px;animation-delay:.1s}
+.waveform span:nth-child(3){height:36px;animation-delay:.2s}
+.waveform span:nth-child(4){height:20px;animation-delay:.3s}
+.waveform span:nth-child(5){height:32px;animation-delay:.4s}
+.waveform span:nth-child(6){height:16px;animation-delay:.5s}
+.waveform span:nth-child(7){height:28px;animation-delay:.6s}
+.waveform span:nth-child(8){height:12px;animation-delay:.7s}
+@keyframes wf{0%,100%{transform:scaleY(.4);opacity:.5}50%{transform:scaleY(1);opacity:1}}
+.phone-timer{font-size:1.5rem;font-weight:600;font-variant-numeric:tabular-nums;color:var(--text);letter-spacing:.05em}
+.phone-actions{display:flex;justify-content:center;gap:20px;margin-top:auto;padding-top:20px}
+.pa-btn{width:48px;height:48px;border-radius:50%;display:flex;align-items:center;justify-content:center;border:1px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.05)}
+.pa-btn.end{background:#ef4444;border-color:#ef4444;width:56px;height:56px}
+
+/* SECTIONS */
+section{padding:120px 0;position:relative}
+.s-label{display:inline-flex;align-items:center;gap:8px;font-size:.75rem;font-weight:600;text-transform:uppercase;letter-spacing:.15em;color:var(--cyan);margin-bottom:16px}
+.s-label::before{content:'';width:20px;height:1px;background:var(--cyan)}
+.s-title{font-family:var(--font-d);font-size:clamp(2rem,4vw,3rem);font-weight:800;letter-spacing:-0.03em;line-height:1.1;margin-bottom:16px}
+.s-desc{font-size:1.05rem;color:var(--text2);max-width:560px;line-height:1.7}
+.s-header{text-align:center;margin-bottom:64px}
+.s-header .s-desc{margin:0 auto}
+.divider{width:100%;height:1px;background:linear-gradient(90deg,transparent,var(--border),transparent)}
+
+/* HOW IT WORKS */
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:32px;position:relative}
+.steps::before{content:'';position:absolute;top:60px;left:calc(16.66% + 16px);right:calc(16.66% + 16px);height:1px;background:linear-gradient(90deg,var(--blue),var(--cyan));opacity:.3}
+.step{text-align:center;padding:40px 24px;position:relative}
+.step-n{width:56px;height:56px;border-radius:50%;background:var(--bg-glass);border:1px solid var(--border-glow);display:flex;align-items:center;justify-content:center;margin:0 auto 24px;font-family:var(--font-d);font-weight:800;font-size:1.2rem;color:var(--cyan);position:relative;z-index:2;backdrop-filter:blur(10px)}
+.step-ico{width:48px;height:48px;margin:0 auto 16px;display:flex;align-items:center;justify-content:center}
+.step-ico svg{width:32px;height:32px;stroke:var(--cyan);fill:none;stroke-width:1.5}
+.step h3{font-family:var(--font-d);font-weight:700;font-size:1.15rem;margin-bottom:8px}
+.step p{font-size:.9rem;color:var(--text2);line-height:1.6}
+
+/* STATS */
+.stats-s{padding:80px 0;background:var(--bg2);border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
+.stats-g{display:grid;grid-template-columns:repeat(3,1fr);gap:32px}
+.stat{text-align:center;padding:40px 24px;background:var(--bg-glass);border:1px solid var(--border);border-radius:var(--r-lg);backdrop-filter:blur(20px);transition:all .4s var(--ease)}
+.stat:hover{border-color:var(--border-glow);transform:translateY(-4px);box-shadow:0 20px 40px rgba(0,0,0,0.3)}
+.stat-v{font-family:var(--font-d);font-size:clamp(2rem,3.5vw,2.8rem);font-weight:800;margin-bottom:4px}
+.stat-l{font-size:.9rem;color:var(--text2)}
+
+/* FEATURES */
+.feat-g{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
+.feat{padding:36px 28px;background:var(--bg-glass);border:1px solid var(--border);border-radius:var(--r-lg);backdrop-filter:blur(20px);transition:all .4s var(--ease);position:relative;overflow:hidden}
+.feat::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--cyan),transparent);opacity:0;transition:opacity .4s}
+.feat:hover::before{opacity:.5}
+.feat:hover{border-color:var(--border-glow);transform:translateY(-4px);box-shadow:0 20px 40px rgba(0,0,0,0.3)}
+.feat-ico{width:48px;height:48px;border-radius:var(--r-md);background:rgba(6,214,240,0.08);border:1px solid rgba(6,214,240,0.15);display:flex;align-items:center;justify-content:center;margin-bottom:20px}
+.feat-ico svg{width:24px;height:24px;stroke:var(--cyan);fill:none;stroke-width:1.5}
+.feat h3{font-family:var(--font-d);font-weight:700;font-size:1.05rem;margin-bottom:8px}
+.feat p{font-size:.875rem;color:var(--text2);line-height:1.6}
+
+/* PRICING */
+.price-g{display:grid;grid-template-columns:repeat(2,1fr);gap:32px;max-width:800px;margin:0 auto}
+.price{padding:40px 36px;background:var(--bg-glass);border:1px solid var(--border);border-radius:var(--r-xl);backdrop-filter:blur(20px);position:relative;transition:all .4s var(--ease)}
+.price:hover{transform:translateY(-4px);box-shadow:0 20px 60px rgba(0,0,0,0.3)}
+.price.pop{border-color:var(--cyan);box-shadow:0 0 40px rgba(6,214,240,0.08)}
+.price-badge{position:absolute;top:-12px;left:50%;transform:translateX(-50%);padding:4px 16px;background:var(--grad);border-radius:100px;font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:#fff;white-space:nowrap}
+.price-name{font-family:var(--font-d);font-weight:700;font-size:1.2rem;margin-bottom:8px}
+.price-desc{font-size:.85rem;color:var(--text2);margin-bottom:24px;line-height:1.5}
+.price-amt{display:flex;align-items:baseline;gap:4px;margin-bottom:4px}
+.price-cur{font-size:1.2rem;font-weight:600;color:var(--text2)}
+.price-val{font-family:var(--font-d);font-size:3rem;font-weight:800;letter-spacing:-0.03em}
+.price-per{font-size:.85rem;color:var(--text3);margin-bottom:28px}
+.price-list{list-style:none;margin-bottom:32px}
+.price-list li{display:flex;align-items:center;gap:10px;padding:8px 0;font-size:.875rem;color:var(--text2)}
+.price-list li svg{width:18px;height:18px;stroke:var(--cyan);fill:none;stroke-width:2;flex-shrink:0}
+.pbtn{display:block;width:100%;padding:14px 24px;border-radius:100px;font-weight:600;font-size:.95rem;text-align:center;transition:all .3s var(--ease)}
+.pbtn-p{background:var(--grad);color:#fff;box-shadow:0 0 20px rgba(6,214,240,0.2)}
+.pbtn-p:hover{transform:translateY(-1px);box-shadow:0 0 30px rgba(6,214,240,0.35)}
+.pbtn-s{background:var(--bg-glass);border:1px solid var(--border);color:var(--text)}
+.pbtn-s:hover{border-color:var(--cyan);background:rgba(6,214,240,0.05)}
+
+/* CTA */
+.cta-s{text-align:center;position:relative;overflow:hidden}
+.cta-s::before{content:'';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:600px;height:600px;background:radial-gradient(circle,rgba(6,214,240,0.06) 0%,transparent 70%);pointer-events:none}
+.cta-s .s-title{max-width:600px;margin:0 auto 16px}
+.cta-s .s-desc{margin:0 auto 40px}
+.cta-acts{display:flex;flex-direction:column;align-items:center;gap:16px}
+.cta-form{display:flex;gap:0;max-width:460px;width:100%;background:var(--bg-glass);border:1px solid var(--border);border-radius:100px;padding:5px;transition:border-color .3s}
+.cta-form:focus-within{border-color:var(--cyan);box-shadow:0 0 30px rgba(6,214,240,0.1)}
+.cta-form input{flex:1;background:transparent;border:none;outline:none;padding:14px 20px;font-size:.95rem;color:var(--text);min-width:0}
+.cta-form input::placeholder{color:var(--text3)}
+.cta-form button{padding:14px 28px;background:var(--grad);border-radius:100px;font-weight:600;font-size:.9rem;color:#fff;white-space:nowrap;transition:all .3s var(--ease)}
+.cta-form button:hover{transform:scale(1.02)}
+.cta-dep{display:inline-flex;align-items:center;gap:8px;padding:14px 32px;background:var(--bg-glass);border:1px solid var(--border);border-radius:100px;font-weight:600;font-size:.9rem;color:var(--text);transition:all .3s var(--ease)}
+.cta-dep:hover{border-color:var(--gold);background:rgba(240,180,41,0.05)}
+
+/* MODAL */
+.mo{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);backdrop-filter:blur(8px);z-index:2000;align-items:center;justify-content:center;padding:24px}
+.mo.active{display:flex}
+.modal{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r-xl);padding:40px;max-width:440px;width:100%;position:relative}
+.mo-x{position:absolute;top:16px;right:16px;width:36px;height:36px;border-radius:50%;background:var(--bg-glass);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;color:var(--text2);font-size:1.2rem;transition:all .3s}
+.mo-x:hover{border-color:var(--cyan);color:var(--text)}
+.modal h2{font-family:var(--font-d);font-weight:700;font-size:1.3rem;margin-bottom:4px}
+.modal .mo-sub{font-size:.85rem;color:var(--text2);margin-bottom:28px}
+.mo-f{margin-bottom:16px}
+.mo-f label{display:block;font-size:.8rem;font-weight:500;color:var(--text2);margin-bottom:6px}
+.mo-f input{width:100%;padding:12px 16px;background:var(--bg-glass);border:1px solid var(--border);border-radius:var(--r-sm);color:var(--text);font-size:.9rem;outline:none;transition:border-color .3s}
+.mo-f input:focus{border-color:var(--cyan)}
+.mo-btn{width:100%;padding:14px 24px;background:var(--grad);border-radius:100px;font-weight:600;font-size:.95rem;color:#fff;margin-top:8px;transition:all .3s var(--ease);box-shadow:0 0 20px rgba(6,214,240,0.2)}
+.mo-btn:hover{transform:translateY(-1px);box-shadow:0 0 30px rgba(6,214,240,0.35)}
+.mo-btn:disabled{opacity:.7;transform:none}
+.mo-sec{text-align:center;font-size:.75rem;color:var(--text3);margin-top:12px}
+
+/* FOOTER */
+.footer{padding:40px 0;border-top:1px solid var(--border);text-align:center}
+.footer-in{display:flex;flex-direction:column;align-items:center;gap:12px}
+.footer-brand{font-family:var(--font-d);font-weight:700;font-size:1rem}
+.footer-links{display:flex;gap:24px;font-size:.8rem;color:var(--text3)}
+.footer-links a{transition:color .3s}
+.footer-links a:hover{color:var(--text2)}
+.footer-copy{font-size:.75rem;color:var(--text3)}
+
+/* TOAST */
+.toast{position:fixed;bottom:32px;right:32px;padding:16px 24px;background:var(--bg2);border:1px solid var(--border-glow);border-radius:var(--r-md);font-size:.9rem;color:var(--text);z-index:3000;transform:translateY(100px);opacity:0;transition:all .4s var(--ease);backdrop-filter:blur(20px);box-shadow:0 20px 40px rgba(0,0,0,0.4);max-width:360px}
+.toast.vis{transform:translateY(0);opacity:1}
+.toast.err{border-color:rgba(239,68,68,0.3)}
+
+/* RESPONSIVE */
+@media(max-width:1024px){
+  .hero-grid{grid-template-columns:1fr;text-align:center}
+  .hero-sub{margin:0 auto 36px}
+  .hero-form{margin:0 auto}
+  .hero-trust{justify-content:center}
+  .phone-wrap{margin-top:48px}
+  .feat-g{grid-template-columns:repeat(2,1fr)}
+}
+@media(max-width:768px){
+  section{padding:80px 0}
+  .nav-links{display:none}
+  .nav-mob{display:flex}
+  .nav-links.open{display:flex;flex-direction:column;position:absolute;top:72px;left:0;right:0;background:rgba(10,10,15,0.95);backdrop-filter:blur(20px);padding:24px;border-bottom:1px solid var(--border);gap:16px}
+  .steps{grid-template-columns:1fr;max-width:400px;margin:0 auto}
+  .steps::before{display:none}
+  .stats-g{grid-template-columns:1fr;max-width:400px;margin:0 auto}
+  .feat-g{grid-template-columns:1fr}
+  .price-g{grid-template-columns:1fr;max-width:400px;margin:0 auto}
+  .hero-form,.cta-form{flex-direction:column;border-radius:var(--r-md)}
+  .hero-form button,.cta-form button{border-radius:var(--r-sm);width:100%}
+  .phone{width:240px}
+  .modal{padding:28px 24px}
+  .hero-trust{flex-direction:column;gap:8px}
+}
+@media(max-width:480px){
+  .hero h1{font-size:2rem}
+  .s-title{font-size:1.75rem}
+}
+</style>
 </head>
 <body>
-  <!-- ===== NAVBAR ===== -->
-  <nav class="navbar" id="navbar">
-    <div class="container navbar-inner">
-      <a href="#" class="logo">
-        <span class="logo-icon">
-          <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
-            <circle cx="14" cy="14" r="13" stroke="var(--cyan)" stroke-width="2"/>
-            <circle cx="14" cy="14" r="5" fill="var(--cyan)" opacity="0.8"/>
-            <path d="M14 1 L14 6 M14 22 L14 27 M1 14 L6 14 M22 14 L27 14" stroke="var(--cyan)" stroke-width="1.5" opacity="0.5"/>
-          </svg>
-        </span>
-        <span class="logo-text">JARVIS <span class="logo-ai">AI</span></span>
+
+<!-- NAV -->
+<nav class="nav" id="nav">
+  <div class="nav-in">
+    <a href="#" class="nav-logo gt">JARVIS AI</a>
+    <div class="nav-links" id="navLinks">
+      <a href="#how-it-works">How It Works</a>
+      <a href="#pricing">Pricing</a>
+      <a href="#demo">Demo</a>
+      <a href="#hero" class="nav-cta">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
+        Hear JARVIS Now
       </a>
-      <div class="nav-links">
-        <a href="#features">Features</a>
-        <a href="#industries">Industries</a>
-        <a href="#pricing">Pricing</a>
-        <a href="#demo" class="btn btn-sm btn-primary">Get Demo</a>
-      </div>
-      <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Menu">
-        <span></span><span></span><span></span>
-      </button>
     </div>
-  </nav>
+    <button class="nav-mob" id="navToggle" aria-label="Toggle menu"><span></span><span></span><span></span></button>
+  </div>
+</nav>
 
-  <!-- ===== HERO ===== -->
-  <section class="hero" id="demo">
-    <div class="hero-bg">
-      <div class="grid-overlay"></div>
-      <div class="glow glow-1"></div>
-      <div class="glow glow-2"></div>
-      <div class="particles" id="particles"></div>
-    </div>
-    <div class="container hero-content">
-      <div class="hero-badge">
-        <span class="badge-dot"></span>
-        AI-Powered Voice Technology
+<!-- HERO -->
+<section class="hero" id="hero">
+  <div class="aurora"></div>
+  <canvas id="hc"></canvas>
+  <div class="container">
+    <div class="hero-grid">
+      <div>
+        <div class="hero-badge reveal"><span class="ldot"></span>AI-Powered Voice Technology</div>
+        <h1 class="reveal">Your Business Never Misses a Call <span class="gt">Again.</span></h1>
+        <p class="hero-sub reveal">JARVIS is an AI voice receptionist that answers every call, qualifies leads, and books appointments — so you never lose another customer.</p>
+        <form class="hero-form reveal" id="heroForm" onsubmit="return false;">
+          <input type="tel" id="heroPhone" placeholder="Enter your phone number" required>
+          <button type="submit" id="heroDemoBtn">Call Me Now</button>
+        </form>
+        <div class="hero-trust reveal">
+          <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>No credit card required</span>
+          <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>3-minute live demo</span>
+          <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>Works with any business</span>
+        </div>
       </div>
-      <h1 class="hero-title">
-        Your AI Receptionist.<br/>
-        <span class="gradient-text">Always On. Never Misses a Lead.</span>
-      </h1>
-      <p class="hero-subtitle">
-        Hear JARVIS in action — enter your number and get a live 3-minute demo call right now
-      </p>
-
-      <form class="demo-form" id="demoForm">
-        <div class="form-row">
-          <div class="input-group">
-            <div class="input-icon">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+      <div class="phone-wrap reveal">
+        <div class="phone-glow"></div>
+        <div class="phone-float">
+          <div class="phone">
+            <div class="phone-scr">
+              <div class="phone-status"><span>9:41</span><span>5G</span></div>
+              <div class="phone-ui">
+                <div class="phone-av">J</div>
+                <div class="phone-name">JARVIS AI</div>
+                <div class="phone-label">AI Voice Receptionist</div>
+                <div class="phone-live"><span class="ldot"></span>LIVE</div>
+                <div class="waveform"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
+                <div class="phone-timer" id="callTimer">02:47</div>
+              </div>
+              <div class="phone-actions">
+                <div class="pa-btn"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5"><path d="M12 1a3 3 0 00-3 3v8a3 3 0 006 0V4a3 3 0 00-3-3z"/><path d="M19 10v2a7 7 0 01-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/></svg></div>
+                <div class="pa-btn end"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6A19.79 19.79 0 012.12 4.18 2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg></div>
+                <div class="pa-btn"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 010 14.14M15.54 8.46a5 5 0 010 7.07"/></svg></div>
+              </div>
             </div>
-            <input type="tel" id="phoneInput" name="phone" placeholder="Enter your phone number" required autocomplete="tel" />
-          </div>
-          <button type="submit" class="btn btn-primary btn-lg" id="demoBtn">
-            <span class="btn-text">Call Me Now</span>
-            <span class="btn-loader" style="display:none;">
-              <svg width="20" height="20" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="3" fill="none" stroke-dasharray="31.4" stroke-dashoffset="10"><animateTransform attributeName="transform" type="rotate" from="0 12 12" to="360 12 12" dur="0.8s" repeatCount="indefinite"/></circle></svg>
-            </span>
-          </button>
-        </div>
-        <div class="form-message" id="formMessage"></div>
-      </form>
-
-      <div class="hero-trust">
-        <div class="trust-item">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--cyan)" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-          No credit card required
-        </div>
-        <div class="trust-item">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--cyan)" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-          3-minute live demo
-        </div>
-        <div class="trust-item">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--cyan)" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-          Works with any business
-        </div>
-      </div>
-    </div>
-    <div class="hero-scroll-indicator">
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--cyan)" stroke-width="2" opacity="0.5"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
-    </div>
-  </section>
-
-  <!-- ===== FEATURES ===== -->
-  <section class="section features" id="features">
-    <div class="container">
-      <div class="section-header">
-        <span class="section-label">Why JARVIS AI</span>
-        <h2 class="section-title">Three reasons businesses <span class="gradient-text">switch to JARVIS</span></h2>
-      </div>
-      <div class="features-grid">
-        <!-- Feature 1 -->
-        <div class="feature-card">
-          <div class="feature-icon">
-            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--cyan)" stroke-width="1.5">
-              <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/>
-              <path d="M14.05 2a9 9 0 0 1 8 7.94" opacity="0.5"/>
-              <path d="M14.05 6A5 5 0 0 1 18 10" opacity="0.5"/>
-            </svg>
-          </div>
-          <h3 class="feature-title">Never Miss a Call</h3>
-          <p class="feature-desc">JARVIS answers every call instantly, 24/7/365. No voicemail, no hold music, no missed opportunities. Every caller gets a professional, immediate response.</p>
-          <div class="feature-stat">
-            <span class="stat-number">100%</span>
-            <span class="stat-label">Call Answer Rate</span>
-          </div>
-        </div>
-        <!-- Feature 2 -->
-        <div class="feature-card">
-          <div class="feature-icon">
-            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--cyan)" stroke-width="1.5">
-              <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
-              <circle cx="8.5" cy="7" r="4"/>
-              <path d="M20 8v6M23 11h-6" opacity="0.7"/>
-            </svg>
-          </div>
-          <h3 class="feature-title">Qualifies Leads Automatically</h3>
-          <p class="feature-desc">JARVIS asks the right questions, captures caller details, and scores leads in real-time. Your team only talks to qualified prospects — saving hours every day.</p>
-          <div class="feature-stat">
-            <span class="stat-number">3x</span>
-            <span class="stat-label">More Qualified Leads</span>
-          </div>
-        </div>
-        <!-- Feature 3 -->
-        <div class="feature-card">
-          <div class="feature-icon">
-            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--cyan)" stroke-width="1.5">
-              <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
-              <line x1="16" y1="2" x2="16" y2="6"/>
-              <line x1="8" y1="2" x2="8" y2="6"/>
-              <line x1="3" y1="10" x2="21" y2="10"/>
-              <path d="M8 14h.01M12 14h.01M16 14h.01M8 18h.01M12 18h.01" opacity="0.7"/>
-            </svg>
-          </div>
-          <h3 class="feature-title">Books Appointments 24/7</h3>
-          <p class="feature-desc">Integrated with your calendar, JARVIS books appointments on the spot. No back-and-forth, no scheduling delays. Clients get instant confirmation.</p>
-          <div class="feature-stat">
-            <span class="stat-number">24/7</span>
-            <span class="stat-label">Booking Availability</span>
           </div>
         </div>
       </div>
-    </div>
-  </section>
-
-  <!-- ===== HOW IT WORKS ===== -->
-  <section class="section how-it-works">
-    <div class="container">
-      <div class="section-header">
-        <span class="section-label">How It Works</span>
-        <h2 class="section-title">Up and running in <span class="gradient-text">under 48 hours</span></h2>
-      </div>
-      <div class="steps-grid">
-        <div class="step-card">
-          <div class="step-number">01</div>
-          <h3>Discovery Call</h3>
-          <p>We learn about your business, call flow, and what a perfect receptionist looks like for you.</p>
-        </div>
-        <div class="step-connector">
-          <svg width="40" height="2" viewBox="0 0 40 2"><line x1="0" y1="1" x2="40" y2="1" stroke="var(--cyan)" stroke-width="2" stroke-dasharray="4 4" opacity="0.4"/></svg>
-        </div>
-        <div class="step-card">
-          <div class="step-number">02</div>
-          <h3>Custom Build</h3>
-          <p>We configure JARVIS with your scripts, FAQs, booking rules, and brand voice.</p>
-        </div>
-        <div class="step-connector">
-          <svg width="40" height="2" viewBox="0 0 40 2"><line x1="0" y1="1" x2="40" y2="1" stroke="var(--cyan)" stroke-width="2" stroke-dasharray="4 4" opacity="0.4"/></svg>
-        </div>
-        <div class="step-card">
-          <div class="step-number">03</div>
-          <h3>Go Live</h3>
-          <p>Forward your calls to JARVIS and start converting more leads — from day one.</p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ===== INDUSTRIES ===== -->
-  <section class="section industries" id="industries">
-    <div class="container">
-      <div class="section-header">
-        <span class="section-label">Built For Your Industry</span>
-        <h2 class="section-title">Trusted by businesses <span class="gradient-text">across industries</span></h2>
-        <p class="section-desc">JARVIS is trained and optimized for service-based businesses that rely on phone leads.</p>
-      </div>
-      <div class="industries-grid">
-        <div class="industry-card">
-          <div class="industry-icon">🦷</div>
-          <h3>Dental Clinics</h3>
-          <p>Book hygiene appointments, handle new patient inquiries, and manage cancellations automatically.</p>
-        </div>
-        <div class="industry-card">
-          <div class="industry-icon">⚖️</div>
-          <h3>Law Firms</h3>
-          <p>Screen potential clients, capture case details, and schedule consultations without paralegal time.</p>
-        </div>
-        <div class="industry-card">
-          <div class="industry-icon">🏠</div>
-          <h3>Real Estate</h3>
-          <p>Qualify buyer and seller leads, answer property questions, and book showings on autopilot.</p>
-        </div>
-        <div class="industry-card">
-          <div class="industry-icon">🔧</div>
-          <h3>HVAC</h3>
-          <p>Dispatch service calls, handle emergency requests, and book maintenance appointments 24/7.</p>
-        </div>
-        <div class="industry-card">
-          <div class="industry-icon">🏥</div>
-          <h3>Medical Offices</h3>
-          <p>Manage patient scheduling, handle prescription refill requests, and route urgent calls.</p>
-        </div>
-        <div class="industry-card">
-          <div class="industry-icon">✨</div>
-          <h3>Your Business</h3>
-          <p>Any service business that depends on phone calls can benefit from JARVIS AI.</p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ===== PRICING ===== -->
-  <section class="section pricing" id="pricing">
-    <div class="container">
-      <div class="section-header">
-        <span class="section-label">Simple Pricing</span>
-        <h2 class="section-title">Get started with <span class="gradient-text">JARVIS AI</span></h2>
-      </div>
-      <div class="pricing-card-wrapper">
-        <div class="pricing-card">
-          <div class="pricing-badge">Most Popular</div>
-          <h3 class="pricing-name">JARVIS AI Setup</h3>
-          <p class="pricing-desc">Custom AI voice receptionist, fully configured, tested, and deployed for your business.</p>
-          <div class="pricing-amount">
-            <span class="pricing-currency">$</span>
-            <span class="pricing-number">297</span>
-            <span class="pricing-period">CAD / setup deposit</span>
-          </div>
-          <ul class="pricing-features">
-            <li>
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--cyan)" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
-              Custom AI voice configuration
-            </li>
-            <li>
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--cyan)" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
-              Business-specific call scripts
-            </li>
-            <li>
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--cyan)" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
-              Calendar & CRM integration
-            </li>
-            <li>
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--cyan)" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
-              Lead qualification logic
-            </li>
-            <li>
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--cyan)" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
-              48-hour deployment
-            </li>
-            <li>
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--cyan)" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
-              30-day support included
-            </li>
-          </ul>
-          <button class="btn btn-primary btn-lg btn-full" id="checkoutBtn" onclick="openCheckout()">
-            Get Started Now
-          </button>
-          <p class="pricing-note">Secure payment via Stripe. Setup begins within 24 hours of deposit.</p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ===== FINAL CTA ===== -->
-  <section class="section cta-section">
-    <div class="container">
-      <div class="cta-card">
-        <div class="cta-glow"></div>
-        <h2>Ready to stop missing calls?</h2>
-        <p>Try JARVIS right now. Enter your number and experience the future of business communication.</p>
-        <a href="#demo" class="btn btn-primary btn-lg">Get Your Free Demo Call</a>
-      </div>
-    </div>
-  </section>
-
-  <!-- ===== FOOTER ===== -->
-  <footer class="footer">
-    <div class="container footer-inner">
-      <div class="footer-brand">
-        <span class="logo-text">JARVIS <span class="logo-ai">AI</span></span>
-        <p>AI-powered voice receptionist for modern businesses.</p>
-      </div>
-      <div class="footer-links">
-        <a href="#features">Features</a>
-        <a href="#industries">Industries</a>
-        <a href="#pricing">Pricing</a>
-        <a href="#demo">Get Demo</a>
-      </div>
-      <div class="footer-bottom">
-        <p>&copy; 2026 JARVIS AI. All rights reserved.</p>
-      </div>
-    </div>
-  </footer>
-
-  <!-- ===== CHECKOUT MODAL ===== -->
-  <div class="modal-overlay" id="checkoutModal">
-    <div class="modal">
-      <button class="modal-close" onclick="closeCheckoutModal()">&times;</button>
-      <h2>Complete Your Setup</h2>
-      <p>Enter your details below to proceed to secure checkout.</p>
-      <form id="checkoutForm">
-        <div class="form-group">
-          <label for="checkoutName">Full Name</label>
-          <input type="text" id="checkoutName" name="name" required placeholder="John Smith" />
-        </div>
-        <div class="form-group">
-          <label for="checkoutEmail">Email Address</label>
-          <input type="email" id="checkoutEmail" name="email" required placeholder="john@business.com" />
-        </div>
-        <div class="form-group">
-          <label for="checkoutPhone">Phone Number</label>
-          <input type="tel" id="checkoutPhone" name="phone" required placeholder="+1 (555) 123-4567" />
-        </div>
-        <div class="form-group">
-          <label for="checkoutBusiness">Business Name</label>
-          <input type="text" id="checkoutBusiness" name="business" required placeholder="Acme Dental Clinic" />
-        </div>
-        <button type="submit" class="btn btn-primary btn-lg btn-full" id="checkoutSubmitBtn">
-          <span class="btn-text">Proceed to Payment — $297 CAD</span>
-          <span class="btn-loader" style="display:none;">
-            <svg width="20" height="20" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="3" fill="none" stroke-dasharray="31.4" stroke-dashoffset="10"><animateTransform attributeName="transform" type="rotate" from="0 12 12" to="360 12 12" dur="0.8s" repeatCount="indefinite"/></circle></svg>
-          </span>
-        </button>
-      </form>
-      <p class="modal-secure">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-        Secured by Stripe. 256-bit SSL encryption.
-      </p>
     </div>
   </div>
+</section>
 
-  <script src="/app.js"></script>
+<div class="divider"></div>
+
+<!-- HOW IT WORKS -->
+<section id="how-it-works">
+  <div class="container">
+    <div class="s-header">
+      <div class="s-label reveal">How It Works</div>
+      <h2 class="s-title reveal">Three steps. Ten seconds. <span class="gt">That's it.</span></h2>
+      <p class="s-desc reveal">Experience JARVIS for yourself — it takes less time than reading this sentence.</p>
+    </div>
+    <div class="steps">
+      <div class="step reveal">
+        <div class="step-n">1</div>
+        <div class="step-ico"><svg viewBox="0 0 24 24"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg></div>
+        <h3>Enter Your Number</h3>
+        <p>Type your phone number into the field above. No account needed, no credit card required.</p>
+      </div>
+      <div class="step reveal">
+        <div class="step-n">2</div>
+        <div class="step-ico"><svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg></div>
+        <h3>JARVIS Calls You in 10s</h3>
+        <p>Within seconds, your phone rings. Pick up and you're speaking directly with your AI receptionist.</p>
+      </div>
+      <div class="step reveal">
+        <div class="step-n">3</div>
+        <div class="step-ico"><svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></div>
+        <h3>Experience Your AI Receptionist</h3>
+        <p>Hear how JARVIS handles calls, qualifies leads, and books appointments — customized for your business.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- STATS -->
+<section class="stats-s">
+  <div class="container">
+    <div class="stats-g">
+      <div class="stat reveal"><div class="stat-v gt">&lt; 10s</div><div class="stat-l">Average response time</div></div>
+      <div class="stat reveal"><div class="stat-v gt">24/7</div><div class="stat-l">Always-on availability</div></div>
+      <div class="stat reveal"><div class="stat-v gt">100%</div><div class="stat-l">On-device privacy</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section id="features">
+  <div class="container">
+    <div class="s-header">
+      <div class="s-label reveal">Features</div>
+      <h2 class="s-title reveal">Everything your receptionist does. <span class="gt">Without the salary.</span></h2>
+      <p class="s-desc reveal">JARVIS handles the calls, qualifies the leads, and books the meetings — while you focus on running your business.</p>
+    </div>
+    <div class="feat-g">
+      <div class="feat reveal">
+        <div class="feat-ico"><svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6A19.79 19.79 0 012.12 4.18 2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg></div>
+        <h3>Instant Callback</h3>
+        <p>Every missed call gets an immediate callback from JARVIS. No lead falls through the cracks, ever.</p>
+      </div>
+      <div class="feat reveal">
+        <div class="feat-ico"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div>
+        <h3>Appointment Booking</h3>
+        <p>Syncs with your calendar and books appointments in real-time. Clients get instant confirmation.</p>
+      </div>
+      <div class="feat reveal">
+        <div class="feat-ico"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg></div>
+        <h3>Lead Qualification</h3>
+        <p>JARVIS asks the right questions, scores leads, and routes only qualified prospects to your team.</p>
+      </div>
+      <div class="feat reveal">
+        <div class="feat-ico"><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+        <h3>PHIPA / PIPEDA Compliant</h3>
+        <p>Built for Canadian businesses. All data handling meets federal and provincial privacy regulations.</p>
+      </div>
+      <div class="feat reveal">
+        <div class="feat-ico"><svg viewBox="0 0 24 24"><path d="M12 1a3 3 0 00-3 3v8a3 3 0 006 0V4a3 3 0 00-3-3z"/><path d="M19 10v2a7 7 0 01-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg></div>
+        <h3>Custom Voice &amp; Script</h3>
+        <p>Tailored to your brand. Custom greeting, call flow, FAQs, and personality — it sounds like your best employee.</p>
+      </div>
+      <div class="feat reveal">
+        <div class="feat-ico"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg></div>
+        <h3>Telegram Notifications</h3>
+        <p>Get instant alerts on every new lead, booked appointment, and call summary — right in your pocket.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- PRICING -->
+<section id="pricing">
+  <div class="container">
+    <div class="s-header">
+      <div class="s-label reveal">Pricing</div>
+      <h2 class="s-title reveal">Simple, transparent <span class="gt">pricing.</span></h2>
+      <p class="s-desc reveal">Start with a free demo call. If you love it, we'll build your custom AI receptionist.</p>
+    </div>
+    <div class="price-g">
+      <div class="price reveal">
+        <div class="price-name">Live Demo</div>
+        <div class="price-desc">Experience JARVIS first-hand with a free 3-minute demo call to your phone.</div>
+        <div class="price-amt"><span class="price-cur">$</span><span class="price-val">0</span></div>
+        <div class="price-per">Free forever</div>
+        <ul class="price-list">
+          <li><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>3-minute live demo call</li>
+          <li><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Hear AI voice quality</li>
+          <li><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>No credit card required</li>
+          <li><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Instant callback</li>
+        </ul>
+        <button class="pbtn pbtn-s" onclick="document.getElementById('heroPhone').focus();window.scrollTo({top:0,behavior:'smooth'})">Try Free Demo</button>
+      </div>
+      <div class="price pop reveal">
+        <div class="price-badge">Most Popular</div>
+        <div class="price-name">JARVIS AI Setup</div>
+        <div class="price-desc">Custom AI voice receptionist, fully configured, tested, and deployed for your business.</div>
+        <div class="price-amt"><span class="price-cur">$</span><span class="price-val">297</span></div>
+        <div class="price-per">CAD setup deposit + $97/mo after launch</div>
+        <ul class="price-list">
+          <li><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Custom AI voice configuration</li>
+          <li><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Business-specific call scripts</li>
+          <li><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Calendar &amp; CRM integration</li>
+          <li><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Lead qualification logic</li>
+          <li><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>48-hour deployment</li>
+          <li><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>30-day support included</li>
+        </ul>
+        <button class="pbtn pbtn-p" id="pricingDepositBtn">Get Started — $297 CAD</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- FINAL CTA -->
+<section class="cta-s" id="demo">
+  <div class="container">
+    <div class="s-label reveal">Ready?</div>
+    <h2 class="s-title reveal">Stop losing calls. <span class="gt">Start closing leads.</span></h2>
+    <p class="s-desc reveal">Try JARVIS right now — enter your number and experience the future of business communication.</p>
+    <div class="cta-acts reveal">
+      <form class="cta-form" id="ctaForm" onsubmit="return false;">
+        <input type="tel" id="ctaPhone" placeholder="Enter your phone number" required>
+        <button type="submit" id="ctaDemoBtn">Call Me Now</button>
+      </form>
+      <button class="cta-dep" id="ctaDepositBtn">
+        Or secure your setup — $297 CAD
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+      </button>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="container">
+    <div class="footer-in">
+      <div class="footer-brand gt">JARVIS AI</div>
+      <div class="footer-links">
+        <a href="mailto:casey@cyberchaintec.com">casey@cyberchaintec.com</a>
+        <a href="#pricing">Pricing</a>
+        <a href="#features">Features</a>
+      </div>
+      <div class="footer-copy">&copy; 2025 CyberChain Technologies. All rights reserved.</div>
+    </div>
+  </div>
+</footer>
+
+<!-- CHECKOUT MODAL -->
+<div class="mo" id="checkoutModal">
+  <div class="modal">
+    <button class="mo-x" id="modalClose">&times;</button>
+    <h2>Complete Your Setup</h2>
+    <p class="mo-sub">Enter your details below to proceed to secure checkout.</p>
+    <form id="checkoutForm" onsubmit="return false;">
+      <div class="mo-f"><label for="custName">Full Name</label><input type="text" id="custName" placeholder="John Smith" required></div>
+      <div class="mo-f"><label for="custEmail">Email Address</label><input type="email" id="custEmail" placeholder="john@business.com" required></div>
+      <div class="mo-f"><label for="custPhone">Phone Number</label><input type="tel" id="custPhone" placeholder="+1 (647) 555-1234" required></div>
+      <div class="mo-f"><label for="custBusiness">Business Name</label><input type="text" id="custBusiness" placeholder="Smith Dental Clinic" required></div>
+      <button type="submit" class="mo-btn" id="checkoutSubmit">Proceed to Payment — $297 CAD</button>
+    </form>
+    <div class="mo-sec">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:inline;vertical-align:middle;margin-right:4px;opacity:.5"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+      Secured by Stripe. 256-bit SSL encryption.
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+(function(){
+'use strict';
+
+/* ---- Three.js Particle Field ---- */
+function initParticles(){
+  var c=document.getElementById('hc'),h=document.querySelector('.hero');
+  if(!c||!h)return;
+  var r=new THREE.WebGLRenderer({canvas:c,alpha:true,antialias:true});
+  r.setPixelRatio(Math.min(window.devicePixelRatio,2));
+  r.setSize(h.offsetWidth,h.offsetHeight);
+  var s=new THREE.Scene(),cam=new THREE.PerspectiveCamera(60,h.offsetWidth/h.offsetHeight,0.1,1000);
+  cam.position.z=50;
+  var n=800,pos=new Float32Array(n*3),col=new Float32Array(n*3),pal=[new THREE.Color(0x06d6f0),new THREE.Color(0x3b82f6),new THREE.Color(0xf0b429)];
+  for(var i=0;i<n;i++){
+    pos[i*3]=(Math.random()-0.5)*120;pos[i*3+1]=(Math.random()-0.5)*80;pos[i*3+2]=(Math.random()-0.5)*60;
+    var cl=pal[Math.floor(Math.random()*pal.length)];
+    col[i*3]=cl.r;col[i*3+1]=cl.g;col[i*3+2]=cl.b;
+  }
+  var g=new THREE.BufferGeometry();
+  g.setAttribute('position',new THREE.BufferAttribute(pos,3));
+  g.setAttribute('color',new THREE.BufferAttribute(col,3));
+  var m=new THREE.PointsMaterial({size:1.5,vertexColors:true,transparent:true,opacity:0.6,sizeAttenuation:true,blending:THREE.AdditiveBlending,depthWrite:false});
+  var pts=new THREE.Points(g,m);s.add(pts);
+  var mx=0,my=0;
+  document.addEventListener('mousemove',function(e){mx=(e.clientX/window.innerWidth-0.5)*2;my=(e.clientY/window.innerHeight-0.5)*2;});
+  (function anim(){
+    requestAnimationFrame(anim);
+    pts.rotation.y+=0.0003;pts.rotation.x+=0.0001;
+    cam.position.x+=(mx*5-cam.position.x)*0.02;
+    cam.position.y+=(-my*5-cam.position.y)*0.02;
+    cam.lookAt(s.position);r.render(s,cam);
+  })();
+  window.addEventListener('resize',function(){r.setSize(h.offsetWidth,h.offsetHeight);cam.aspect=h.offsetWidth/h.offsetHeight;cam.updateProjectionMatrix();});
+}
+
+/* ---- GSAP ---- */
+function initAnim(){
+  gsap.registerPlugin(ScrollTrigger);
+  gsap.utils.toArray('.reveal').forEach(function(el){
+    gsap.fromTo(el,{opacity:0,y:40},{opacity:1,y:0,duration:0.8,ease:'power3.out',scrollTrigger:{trigger:el,start:'top 88%',once:true}});
+  });
+}
+
+/* ---- Nav ---- */
+function initNav(){
+  var nav=document.getElementById('nav'),tog=document.getElementById('navToggle'),lnk=document.getElementById('navLinks');
+  window.addEventListener('scroll',function(){nav.classList.toggle('scrolled',window.scrollY>40);});
+  tog.addEventListener('click',function(){lnk.classList.toggle('open');});
+  lnk.querySelectorAll('a').forEach(function(a){a.addEventListener('click',function(){lnk.classList.remove('open');});});
+}
+
+/* ---- Timer ---- */
+function initTimer(){
+  var t=document.getElementById('callTimer');if(!t)return;
+  var s=167;
+  setInterval(function(){s++;if(s>=600)s=0;t.textContent=String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0');},1000);
+}
+
+/* ---- Toast ---- */
+function toast(msg,err){
+  var t=document.getElementById('toast');t.textContent=msg;
+  t.className='toast vis'+(err?' err':'');
+  setTimeout(function(){t.className='toast';},4000);
+}
+
+/* ---- Demo ---- */
+function demo(phone,btn){
+  if(!phone||phone.replace(/\D/g,'').length<7){toast('Please enter a valid phone number.',true);return;}
+  var orig=btn.textContent;btn.textContent='Requesting...';btn.disabled=true;
+  fetch('/api/demo-request',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({phone:phone})})
+  .then(function(r){return r.json();})
+  .then(function(d){
+    if(d.success){toast('Demo request received! We\'ll call you shortly.');btn.textContent='Requested!';setTimeout(function(){btn.textContent=orig;btn.disabled=false;},3000);}
+    else throw new Error(d.error||'Failed');
+  }).catch(function(){toast('Something went wrong. Please try again.',true);btn.textContent=orig;btn.disabled=false;});
+}
+
+/* ---- Checkout ---- */
+function initCheckout(){
+  var mo=document.getElementById('checkoutModal'),cl=document.getElementById('modalClose'),fm=document.getElementById('checkoutForm');
+  function open(){mo.classList.add('active');}
+  function close(){mo.classList.remove('active');}
+  document.getElementById('pricingDepositBtn').addEventListener('click',open);
+  document.getElementById('ctaDepositBtn').addEventListener('click',open);
+  cl.addEventListener('click',close);
+  mo.addEventListener('click',function(e){if(e.target===mo)close();});
+  fm.addEventListener('submit',function(e){
+    e.preventDefault();
+    var name=document.getElementById('custName').value.trim(),email=document.getElementById('custEmail').value.trim(),phone=document.getElementById('custPhone').value.trim(),biz=document.getElementById('custBusiness').value.trim();
+    if(!name||!email||!phone||!biz){toast('Please fill in all fields.',true);return;}
+    var btn=document.getElementById('checkoutSubmit');btn.textContent='Processing...';btn.disabled=true;
+    fetch('/api/create-checkout',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name:name,email:email,phone:phone,business:biz})})
+    .then(function(r){return r.json();})
+    .then(function(d){if(d.url)window.location.href=d.url;else throw new Error(d.error||'Failed');})
+    .catch(function(err){toast(err.message||'Something went wrong.',true);btn.textContent='Proceed to Payment — $297 CAD';btn.disabled=false;});
+  });
+}
+
+/* ---- Init ---- */
+document.addEventListener('DOMContentLoaded',function(){
+  initParticles();initAnim();initNav();initTimer();initCheckout();
+  document.getElementById('heroDemoBtn').addEventListener('click',function(){demo(document.getElementById('heroPhone').value,this);});
+  document.getElementById('ctaDemoBtn').addEventListener('click',function(){demo(document.getElementById('ctaPhone').value,this);});
+});
+})();
+</script>
 </body>
 </html>
