@@ -245,6 +245,12 @@ section{padding:120px 0;position:relative}
   .hero h1{font-size:2rem}
   .s-title{font-size:1.75rem}
 }
+/* ---- Audio Toggle ---- */
+.audio-toggle{position:fixed;bottom:90px;right:28px;width:48px;height:48px;border-radius:50%;background:rgba(6,214,240,0.08);border:1px solid rgba(6,214,240,0.3);color:var(--cyan);cursor:pointer;display:flex;align-items:center;justify-content:center;z-index:2500;transition:all .3s var(--ease);backdrop-filter:blur(12px);box-shadow:0 4px 20px rgba(6,214,240,0.12)}
+.audio-toggle:hover{background:rgba(6,214,240,0.18);box-shadow:0 4px 30px rgba(6,214,240,0.35);transform:scale(1.08)}
+.audio-toggle.active{background:linear-gradient(135deg,rgba(59,130,246,0.2),rgba(6,214,240,0.2));border-color:var(--cyan);box-shadow:0 0 24px rgba(6,214,240,0.4)}
+.audio-prompt{position:fixed;bottom:148px;right:20px;background:rgba(10,10,15,0.85);border:1px solid rgba(6,214,240,0.25);border-radius:100px;padding:8px 16px;font-size:.8rem;color:var(--cyan);z-index:2500;backdrop-filter:blur(12px);opacity:0;transform:translateY(10px) scale(0.95);transition:all .4s var(--ease);pointer-events:none;white-space:nowrap;font-family:var(--font-b);letter-spacing:.02em}
+.audio-prompt.vis{opacity:1;transform:translateY(0) scale(1)}
 </style>
 </head>
 <body>
@@ -526,6 +532,17 @@ section{padding:120px 0;position:relative}
 <!-- TOAST -->
 <div class="toast" id="toast"></div>
 
+<!-- AUDIO TOGGLE BUTTON -->
+<button class="audio-toggle" id="audioToggle" aria-label="Toggle JARVIS audio" title="Toggle JARVIS audio">
+  <svg id="audioIconOn" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 010 14.14M15.54 8.46a5 5 0 010 7.07"/></svg>
+  <svg id="audioIconOff" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><line x1="23" y1="9" x2="17" y2="15"/><line x1="17" y1="9" x2="23" y2="15"/></svg>
+</button>
+
+<!-- JARVIS AUDIO PROMPT -->
+<div class="audio-prompt" id="audioPrompt">
+  <span class="ldot" style="width:8px;height:8px;margin-right:8px"></span>🔊 Click to hear JARVIS
+</div>
+
 <script>
 (function(){
 'use strict';
@@ -636,21 +653,226 @@ function initCheckout(){
   });
 }
 
+/* ---- JARVIS Audio System ---- */
+var JARVIS_AUDIO = (function(){
+  var ctx = null;
+  var ambientGain = null;
+  var ambientOsc = null;
+  var ambientOsc2 = null;
+  var ambientStarted = false;
+  var muted = true;
+  var voicePlayed = false;
+  var voiceAudio = null;
+  var promptShown = false;
+
+  function getCtx(){
+    if(!ctx) ctx = new (window.AudioContext || window.webkitAudioContext)();
+    return ctx;
+  }
+
+  /* Soft electronic ambient hum using two detuned oscillators + LFO tremolo */
+  function startAmbient(){
+    if(ambientStarted) return;
+    ambientStarted = true;
+    var c = getCtx();
+
+    ambientGain = c.createGain();
+    ambientGain.gain.setValueAtTime(0, c.currentTime);
+    ambientGain.gain.linearRampToValueAtTime(0.055, c.currentTime + 3);
+
+    // Low-frequency drone — 55 Hz (A1)
+    ambientOsc = c.createOscillator();
+    ambientOsc.type = 'sine';
+    ambientOsc.frequency.value = 55;
+
+    // Slightly detuned harmonic — 110.4 Hz (A2 + 7 cents)
+    ambientOsc2 = c.createOscillator();
+    ambientOsc2.type = 'sine';
+    ambientOsc2.frequency.value = 110.4;
+
+    // Slow LFO tremolo (0.12 Hz)
+    var lfoGain = c.createGain();
+    lfoGain.gain.value = 0.012;
+    var lfo = c.createOscillator();
+    lfo.type = 'sine';
+    lfo.frequency.value = 0.12;
+    lfo.connect(lfoGain);
+    lfoGain.connect(ambientGain.gain);
+    lfo.start();
+
+    // High-pass filter to keep it airy
+    var hpf = c.createBiquadFilter();
+    hpf.type = 'highpass';
+    hpf.frequency.value = 40;
+
+    ambientOsc.connect(hpf);
+    ambientOsc2.connect(hpf);
+    hpf.connect(ambientGain);
+    ambientGain.connect(c.destination);
+    ambientOsc.start();
+    ambientOsc2.start();
+  }
+
+  function stopAmbient(){
+    if(!ambientGain) return;
+    var c = getCtx();
+    ambientGain.gain.linearRampToValueAtTime(0, c.currentTime + 1.5);
+  }
+
+  /* Short electronic chime for hover on CTA buttons */
+  function playChime(){
+    if(muted) return;
+    var c = getCtx();
+    var osc = c.createOscillator();
+    var g = c.createGain();
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(880, c.currentTime);
+    osc.frequency.exponentialRampToValueAtTime(1320, c.currentTime + 0.08);
+    g.gain.setValueAtTime(0.18, c.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.001, c.currentTime + 0.35);
+    osc.connect(g);
+    g.connect(c.destination);
+    osc.start();
+    osc.stop(c.currentTime + 0.36);
+  }
+
+  /* Play the JARVIS voice intro MP3 */
+  function playVoice(){
+    if(voicePlayed) return;
+    voicePlayed = true;
+    voiceAudio = new Audio('/assets/jarvis-intro.mp3');
+    voiceAudio.volume = 0.92;
+    voiceAudio.play().catch(function(e){
+      console.log('[JARVIS Audio] Voice play blocked:', e.message);
+      voicePlayed = false;
+    });
+  }
+
+  /* Update toggle button icon */
+  function updateIcon(){
+    var on = document.getElementById('audioIconOn');
+    var off = document.getElementById('audioIconOff');
+    var btn = document.getElementById('audioToggle');
+    if(!on || !off || !btn) return;
+    if(muted){
+      on.style.display = 'none';
+      off.style.display = 'block';
+      btn.classList.remove('active');
+      btn.title = 'Unmute JARVIS audio';
+    } else {
+      on.style.display = 'block';
+      off.style.display = 'none';
+      btn.classList.add('active');
+      btn.title = 'Mute JARVIS audio';
+    }
+  }
+
+  /* Show the audio prompt bubble after 2.5s of page load */
+  function showPrompt(){
+    if(promptShown) return;
+    promptShown = true;
+    setTimeout(function(){
+      var p = document.getElementById('audioPrompt');
+      if(p){ p.classList.add('vis'); }
+      // Auto-hide after 6 seconds
+      setTimeout(function(){ if(p) p.classList.remove('vis'); }, 6000);
+    }, 2500);
+  }
+
+  /* First user interaction — unmute and start everything */
+  function onFirstInteraction(){
+    if(!muted) return;
+    // Only auto-start if user clicked the audio toggle specifically
+    // (ambient starts on toggle, not on any page click)
+  }
+
+  /* Toggle mute/unmute */
+  function toggle(){
+    muted = !muted;
+    var c = getCtx();
+    if(c.state === 'suspended') c.resume();
+    if(!muted){
+      startAmbient();
+      if(ambientGain){
+        ambientGain.gain.cancelScheduledValues(c.currentTime);
+        ambientGain.gain.linearRampToValueAtTime(0.055, c.currentTime + 1.5);
+      }
+      // Play voice intro on first unmute
+      setTimeout(function(){ playVoice(); }, 800);
+      // Hide prompt
+      var p = document.getElementById('audioPrompt');
+      if(p) p.classList.remove('vis');
+    } else {
+      stopAmbient();
+      if(voiceAudio){ voiceAudio.pause(); voiceAudio.currentTime = 0; }
+    }
+    updateIcon();
+  }
+
+  return { toggle: toggle, playChime: playChime, showPrompt: showPrompt, updateIcon: updateIcon };
+})();
+
 /* ---- Init ---- */
 document.addEventListener('DOMContentLoaded',function(){
   initParticles();initAnim();initNav();initTimer();initCheckout();
+
   // Hero form — button click and Enter key
   var heroBtn=document.getElementById('heroDemoBtn');
   var heroForm=document.getElementById('heroForm');
   heroBtn.addEventListener('click',function(){demo(document.getElementById('heroPhone').value,heroBtn);});
   heroForm.addEventListener('submit',function(e){e.preventDefault();demo(document.getElementById('heroPhone').value,heroBtn);});
+
   // CTA form — button click and Enter key
   var ctaBtn=document.getElementById('ctaDemoBtn');
   var ctaForm=document.getElementById('ctaForm');
   ctaBtn.addEventListener('click',function(){demo(document.getElementById('ctaPhone').value,ctaBtn);});
   ctaForm.addEventListener('submit',function(e){e.preventDefault();demo(document.getElementById('ctaPhone').value,ctaBtn);});
-  // "Hear JARVIS Now" nav button also closes mobile menu if open
-  document.getElementById('navHearBtn').addEventListener('click',function(){document.getElementById('navLinks').classList.remove('open');});
+
+  // "Hear JARVIS Now" nav button: scroll to phone input, close mobile menu, and play chime
+  document.getElementById('navHearBtn').addEventListener('click',function(){
+    document.getElementById('navLinks').classList.remove('open');
+    JARVIS_AUDIO.playChime();
+  });
+
+  // Audio toggle button
+  var audioToggle = document.getElementById('audioToggle');
+  if(audioToggle){
+    audioToggle.addEventListener('click',function(e){
+      e.stopPropagation();
+      JARVIS_AUDIO.toggle();
+    });
+  }
+
+  // Hover chime on all primary CTA buttons
+  var chimeTargets = ['navHearBtn','heroDemoBtn','ctaDemoBtn','pricingDepositBtn','ctaDepositBtn'];
+  var lastChime = 0;
+  chimeTargets.forEach(function(id){
+    var el = document.getElementById(id);
+    if(el){
+      el.addEventListener('mouseenter',function(){
+        var now = Date.now();
+        if(now - lastChime > 600){ // debounce 600ms
+          JARVIS_AUDIO.playChime();
+          lastChime = now;
+        }
+      });
+    }
+  });
+
+  // Show audio prompt after 2.5s
+  JARVIS_AUDIO.showPrompt();
+  JARVIS_AUDIO.updateIcon();
+
+  // Make audio prompt clickable
+  var audioPrompt = document.getElementById('audioPrompt');
+  if(audioPrompt){
+    audioPrompt.style.pointerEvents = 'auto';
+    audioPrompt.style.cursor = 'pointer';
+    audioPrompt.addEventListener('click',function(){
+      JARVIS_AUDIO.toggle();
+      audioPrompt.classList.remove('vis');
+    });
+  }
 });
 })();
 </script>

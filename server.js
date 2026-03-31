@@ -510,12 +510,65 @@ app.get('/{*splat}', (req, res) => {
 });
 
 // ---------------------------------------------------------------------------
+// Generate JARVIS voice intro via OpenAI TTS on startup (if key available)
+// ---------------------------------------------------------------------------
+async function generateJarvisAudio() {
+  const openaiKey = process.env.OPENAI_API_KEY;
+  const audioPath = path.join(__dirname, 'public', 'assets', 'jarvis-intro.mp3');
+  const assetsDir = path.join(__dirname, 'public', 'assets');
+
+  // Ensure assets dir exists
+  if (!fs.existsSync(assetsDir)) fs.mkdirSync(assetsDir, { recursive: true });
+
+  // Skip if already generated and file is > 50KB (real audio, not placeholder)
+  if (fs.existsSync(audioPath) && fs.statSync(audioPath).size > 50000) {
+    console.log('   Audio       : ✅ jarvis-intro.mp3 already exists');
+    return;
+  }
+
+  if (!openaiKey || openaiKey.includes('placeholder')) {
+    console.log('   Audio       : ⚠️  OPENAI_API_KEY not set — using bundled audio');
+    return;
+  }
+
+  try {
+    console.log('   Audio       : 🎤 Generating JARVIS voice intro via OpenAI TTS...');
+    const ttsText = 'Good evening. I am JARVIS, your AI voice receptionist. I answer every call, qualify your leads, and book appointments around the clock. How may I be of service?';
+    const response = await fetch('https://api.openai.com/v1/audio/speech', {
+      method  : 'POST',
+      headers : {
+        'Authorization' : `Bearer ${openaiKey}`,
+        'Content-Type'  : 'application/json',
+      },
+      body: JSON.stringify({
+        model           : 'tts-1',
+        voice           : 'onyx',
+        input           : ttsText,
+        response_format : 'mp3',
+      }),
+    });
+    if (!response.ok) {
+      const err = await response.text();
+      throw new Error(`OpenAI TTS error ${response.status}: ${err}`);
+    }
+    const buffer = await response.buffer();
+    fs.writeFileSync(audioPath, buffer);
+    console.log(`   Audio       : ✅ Generated jarvis-intro.mp3 (${(buffer.length / 1024).toFixed(1)} KB)`);
+  } catch (err) {
+    console.error('   Audio       : ❌ TTS generation failed:', err.message);
+    console.log('   Audio       : ⚠️  Falling back to bundled audio file');
+  }
+}
+
+// ---------------------------------------------------------------------------
 // Start server
 // ---------------------------------------------------------------------------
-app.listen(PORT, '0.0.0.0', () => {
+app.listen(PORT, '0.0.0.0', async () => {
   console.log(`\n🤖 JARVIS AI server running on port ${PORT}`);
   console.log(`   Environment : ${process.env.NODE_ENV || 'development'}`);
   console.log(`   Stripe      : ${getStripe() ? '✅ connected' : '⚠️  not configured'}`);
   console.log(`   Telegram    : ${process.env.TELEGRAM_BOT_TOKEN && !process.env.TELEGRAM_BOT_TOKEN.includes('placeholder') ? '✅ connected' : '⚠️  not configured'}`);
-  console.log(`   Data dir    : ${DATA_DIR}\n`);
+  console.log(`   Data dir    : ${DATA_DIR}`);
+  await generateJarvisAudio();
+  console.log('');
 });
