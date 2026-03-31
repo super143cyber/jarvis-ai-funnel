@@ -512,7 +512,10 @@ app.get('/{*splat}', (req, res) => {
 // ---------------------------------------------------------------------------
 // Generate JARVIS voice intro via OpenAI TTS on startup (if key available)
 // ---------------------------------------------------------------------------
-async function generateJarvisAudio() {
+// Marker file written alongside the MP3 to track which engine generated it
+const AUDIO_MARKER = path.join(__dirname, 'public', 'assets', '.voice-engine');
+
+async function generateJarvisAudio(force = false) {
   const openaiKey = process.env.OPENAI_API_KEY;
   const audioPath = path.join(__dirname, 'public', 'assets', 'jarvis-intro.mp3');
   const assetsDir = path.join(__dirname, 'public', 'assets');
@@ -520,20 +523,29 @@ async function generateJarvisAudio() {
   // Ensure assets dir exists
   if (!fs.existsSync(assetsDir)) fs.mkdirSync(assetsDir, { recursive: true });
 
-  // Skip if already generated and file is > 50KB (real audio, not placeholder)
-  if (fs.existsSync(audioPath) && fs.statSync(audioPath).size > 50000) {
-    console.log('   Audio       : ✅ jarvis-intro.mp3 already exists');
-    return;
-  }
-
+  // If no OpenAI key, keep whatever file is bundled
   if (!openaiKey || openaiKey.includes('placeholder')) {
     console.log('   Audio       : ⚠️  OPENAI_API_KEY not set — using bundled audio');
-    return;
+    return { ok: false, reason: 'no_api_key' };
+  }
+
+  // Check if we already have an OpenAI-generated file (marker present)
+  if (!force && fs.existsSync(AUDIO_MARKER)) {
+    const engine = fs.readFileSync(AUDIO_MARKER, 'utf8').trim();
+    if (engine === 'openai-onyx') {
+      console.log('   Audio       : ✅ OpenAI onyx voice already generated — skipping');
+      return { ok: true, reason: 'already_openai' };
+    }
+    // Marker says gtts or unknown — regenerate with OpenAI
+    console.log(`   Audio       : 🔄 Replacing ${engine} voice with OpenAI onyx...`);
+  } else if (!force) {
+    console.log('   Audio       : 🎤 No voice marker found — generating via OpenAI TTS...');
+  } else {
+    console.log('   Audio       : 🎤 Force-regenerating JARVIS voice via OpenAI TTS...');
   }
 
   try {
-    console.log('   Audio       : 🎤 Generating JARVIS voice intro via OpenAI TTS...');
-    const ttsText = 'Good evening. I am JARVIS, your AI voice receptionist. I answer every call, qualify your leads, and book appointments around the clock. How may I be of service?';
+    const ttsText = 'Good evening. I am JARVIS, your AI voice assistant. How may I be of service today?';
     const response = await fetch('https://api.openai.com/v1/audio/speech', {
       method  : 'POST',
       headers : {
@@ -548,17 +560,32 @@ async function generateJarvisAudio() {
       }),
     });
     if (!response.ok) {
-      const err = await response.text();
-      throw new Error(`OpenAI TTS error ${response.status}: ${err}`);
+      const errText = await response.text();
+      throw new Error(`OpenAI TTS ${response.status}: ${errText}`);
     }
     const buffer = await response.buffer();
     fs.writeFileSync(audioPath, buffer);
-    console.log(`   Audio       : ✅ Generated jarvis-intro.mp3 (${(buffer.length / 1024).toFixed(1)} KB)`);
+    // Write marker so we know this is the OpenAI version
+    fs.writeFileSync(AUDIO_MARKER, 'openai-onyx', 'utf8');
+    console.log(`   Audio       : ✅ OpenAI onyx voice saved (${(buffer.length / 1024).toFixed(1)} KB)`);
+    return { ok: true, reason: 'generated', size: buffer.length };
   } catch (err) {
     console.error('   Audio       : ❌ TTS generation failed:', err.message);
-    console.log('   Audio       : ⚠️  Falling back to bundled audio file');
+    return { ok: false, reason: err.message };
   }
 }
+
+// ---------------------------------------------------------------------------
+// /api/generate-voice — on-demand voice regeneration (admin use)
+// ---------------------------------------------------------------------------
+app.post('/api/generate-voice', async (req, res) => {
+  const result = await generateJarvisAudio(true);
+  if (result.ok) {
+    res.json({ success: true, message: 'OpenAI onyx voice generated successfully.', ...result });
+  } else {
+    res.status(500).json({ success: false, error: result.reason });
+  }
+});
 
 // ---------------------------------------------------------------------------
 // Start server
