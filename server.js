@@ -355,11 +355,13 @@ app.post('/api/demo-request', async (req, res) => {
 
     console.log(`[Demo Request] ✅ Phone: ${maskPhone(rawPhone)} | Name: ${name || 'N/A'} | Business: ${business || 'N/A'} | IP: ${ip} | Time: ${timestamp}`);
 
-    // Send Telegram notification
-    let tgMsg = `📞 <b>New JARVIS demo request!</b>\n\nNumber: <code>${maskPhone(rawPhone)}</code>`;
-    if (name)     tgMsg += `\nName: ${name}`;
-    if (business) tgMsg += `\nBusiness: ${business}`;
-    tgMsg += `\nTime: ${timestamp}`;
+    // Send Telegram notification — use full normalised number so operator can call back
+    const displayPhone = `+1 (${normalised.slice(0,3)}) ${normalised.slice(3,6)}-${normalised.slice(6)}`;
+    let tgMsg = `📞 <b>New JARVIS Demo Request!</b>\n\n📱 Phone: <code>${displayPhone}</code>`;
+    if (name)     tgMsg += `\n👤 Name: ${name}`;
+    if (business) tgMsg += `\n🏢 Business: ${business}`;
+    tgMsg += `\n⏰ Time: ${timestamp}`;
+    tgMsg += `\n\n✅ <i>Tap the number above to call them back!</i>`;
 
     await sendTelegramMessage(tgMsg);
 

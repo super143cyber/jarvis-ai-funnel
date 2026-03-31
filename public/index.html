@@ -257,10 +257,10 @@ section{padding:120px 0;position:relative}
       <a href="#how-it-works">How It Works</a>
       <a href="#pricing">Pricing</a>
       <a href="#demo">Demo</a>
-      <a href="#hero" class="nav-cta">
+      <button class="nav-cta" id="navHearBtn" onclick="(function(){var el=document.getElementById('heroPhone');if(el){el.scrollIntoView({behavior:'smooth',block:'center'});setTimeout(function(){el.focus();},500);}})()">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
         Hear JARVIS Now
-      </a>
+      </button>
     </div>
     <button class="nav-mob" id="navToggle" aria-label="Toggle menu"><span></span><span></span><span></span></button>
   </div>
@@ -595,13 +595,23 @@ function toast(msg,err){
 /* ---- Demo ---- */
 function demo(phone,btn){
   if(!phone||phone.replace(/\D/g,'').length<7){toast('Please enter a valid phone number.',true);return;}
-  var orig=btn.textContent;btn.textContent='Requesting...';btn.disabled=true;
+  var orig=btn.textContent;btn.textContent='Calling...';btn.disabled=true;
   fetch('/api/demo-request',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({phone:phone})})
   .then(function(r){return r.json();})
   .then(function(d){
-    if(d.success){toast('Demo request received! We\'ll call you shortly.');btn.textContent='Requested!';setTimeout(function(){btn.textContent=orig;btn.disabled=false;},3000);}
-    else throw new Error(d.error||'Failed');
-  }).catch(function(){toast('Something went wrong. Please try again.',true);btn.textContent=orig;btn.disabled=false;});
+    if(d.success){
+      toast('\u2705 Demo request received! JARVIS will call you shortly.');
+      btn.textContent='\u2705 Request Sent!';
+      btn.style.background='linear-gradient(135deg,#22c55e,#16a34a)';
+      setTimeout(function(){btn.textContent=orig;btn.style.background='';btn.disabled=false;},4000);
+    } else {
+      toast(d.error||'Something went wrong. Please try again.',true);
+      btn.textContent=orig;btn.disabled=false;
+    }
+  }).catch(function(err){
+    toast('Connection error. Please check your internet and try again.',true);
+    btn.textContent=orig;btn.disabled=false;
+  });
 }
 
 /* ---- Checkout ---- */
@@ -613,6 +623,7 @@ function initCheckout(){
   document.getElementById('ctaDepositBtn').addEventListener('click',open);
   cl.addEventListener('click',close);
   mo.addEventListener('click',function(e){if(e.target===mo)close();});
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')close();});
   fm.addEventListener('submit',function(e){
     e.preventDefault();
     var name=document.getElementById('custName').value.trim(),email=document.getElementById('custEmail').value.trim(),phone=document.getElementById('custPhone').value.trim(),biz=document.getElementById('custBusiness').value.trim();
@@ -628,8 +639,18 @@ function initCheckout(){
 /* ---- Init ---- */
 document.addEventListener('DOMContentLoaded',function(){
   initParticles();initAnim();initNav();initTimer();initCheckout();
-  document.getElementById('heroDemoBtn').addEventListener('click',function(){demo(document.getElementById('heroPhone').value,this);});
-  document.getElementById('ctaDemoBtn').addEventListener('click',function(){demo(document.getElementById('ctaPhone').value,this);});
+  // Hero form — button click and Enter key
+  var heroBtn=document.getElementById('heroDemoBtn');
+  var heroForm=document.getElementById('heroForm');
+  heroBtn.addEventListener('click',function(){demo(document.getElementById('heroPhone').value,heroBtn);});
+  heroForm.addEventListener('submit',function(e){e.preventDefault();demo(document.getElementById('heroPhone').value,heroBtn);});
+  // CTA form — button click and Enter key
+  var ctaBtn=document.getElementById('ctaDemoBtn');
+  var ctaForm=document.getElementById('ctaForm');
+  ctaBtn.addEventListener('click',function(){demo(document.getElementById('ctaPhone').value,ctaBtn);});
+  ctaForm.addEventListener('submit',function(e){e.preventDefault();demo(document.getElementById('ctaPhone').value,ctaBtn);});
+  // "Hear JARVIS Now" nav button also closes mobile menu if open
+  document.getElementById('navHearBtn').addEventListener('click',function(){document.getElementById('navLinks').classList.remove('open');});
 });
 })();
 </script>
