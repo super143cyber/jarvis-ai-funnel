@@ -275,6 +275,45 @@ async function sendTelegramMessage(message) {
   }
 }
 
+
+// ---------------------------------------------------------------------------
+// Vapi outbound call — triggers JARVIS to call the prospect
+// ---------------------------------------------------------------------------
+async function triggerVapiCall(phoneNumber) {
+  const VAPI_API_KEY = 'e373be49-9aca-4529-80bc-c31919430bc8';
+  const VAPI_ASSISTANT_ID = '0dd853c0-b8db-4376-ae71-0960d9063883';
+  const VAPI_PHONE_NUMBER_ID = '700ef24a-c891-4588-a060-8f6d1e9ebff7';
+  
+  try {
+    const res = await fetch('https://api.vapi.ai/call', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${VAPI_API_KEY}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        assistantId: VAPI_ASSISTANT_ID,
+        phoneNumberId: VAPI_PHONE_NUMBER_ID,
+        customer: {
+          number: `+1${phoneNumber}`,
+          name: 'Demo Prospect',
+        },
+      }),
+    });
+    const data = await res.json();
+    if (res.ok && data.id) {
+      console.log(`[Vapi] Call queued: ${data.id} -> +1${phoneNumber}`);
+      return { ok: true, callId: data.id };
+    } else {
+      console.error('[Vapi] API error:', data);
+      return { ok: false, error: data.message || 'Unknown error' };
+    }
+  } catch (err) {
+    console.error('[Vapi] Call error:', err.message);
+    return { ok: false, error: err.message };
+  }
+}
+
 // ---------------------------------------------------------------------------
 // POST /api/demo-request  — phone number submission with full abuse prevention
 // ---------------------------------------------------------------------------
@@ -363,11 +402,23 @@ app.post('/api/demo-request', async (req, res) => {
     tgMsg += `\n⏰ Time: ${timestamp}`;
     tgMsg += `\n\n✅ <i>Tap the number above to call them back!</i>`;
 
-    await sendTelegramMessage(tgMsg);
-
+    // Fire both Vapi call and Telegram notification in parallel
+    const [vapiResult, tgResult] = await Promise.all([
+      triggerVapiCall(normalised),
+      sendTelegramMessage(tgMsg),
+    ]);
+    
+    if (vapiResult.ok) {
+      console.log(`[Demo Request] Vapi call queued: ${vapiResult.callId}`);
+    } else {
+      console.error(`[Demo Request] Vapi call failed: ${vapiResult.error}`);
+    }
+    
     return res.json({
       success : true,
-      message : 'Demo request received! We will call you shortly.',
+      message : vapiResult.ok
+        ? 'JARVIS is calling you now! Pick up your phone.'
+        : 'Demo request received! We will call you shortly.',
     });
 
   } catch (err) {
